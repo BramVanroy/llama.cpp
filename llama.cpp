@@ -6342,7 +6342,9 @@ static void llm_build_kv_store(
     cb(k_cache_view, "k_cache_view", il);
 
     // note: storing RoPE-ed version of K in the KV cache
-    ggml_build_forward_expand(graph, ggml_cpy(ctx, k_cur, k_cache_view));
+    struct ggml_tensor * k_cur_cast = ggml_cast(ctx, k_cur, k_cache_view->type);
+    ggml_build_forward_expand(graph, ggml_cpy(ctx, k_cur_cast, k_cache_view));
+    //ggml_build_forward_expand(graph, ggml_cpy(ctx, k_cur, k_cache_view));
 
     assert(v_cur->ne[0] == n_embd_v_gqa && v_cur->ne[1] == n_tokens);
 
@@ -6361,7 +6363,9 @@ static void llm_build_kv_store(
     }
     cb(v_cache_view, "v_cache_view", il);
 
-    ggml_build_forward_expand(graph, ggml_cpy(ctx, v_cur, v_cache_view));
+    struct ggml_tensor * v_cur_cast = ggml_cast(ctx, v_cur, v_cache_view->type);
+    ggml_build_forward_expand(graph, ggml_cpy(ctx, v_cur_cast, v_cache_view));
+    //ggml_build_forward_expand(graph, ggml_cpy(ctx, v_cur, v_cache_view));
 }
 
 static struct ggml_tensor * llm_build_norm(
